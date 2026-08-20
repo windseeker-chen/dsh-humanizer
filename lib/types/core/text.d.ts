@@ -10,7 +10,7 @@ export declare function wordCount(text: string): number;
 /**
  * Split a blob into sentences. Handles `。！？!?` (with optional closing
  * quotes) and `.` followed by whitespace or end-of-string, without breaking
- * abbreviations that end in a dot mid-word.
+ * abbreviations such as "Dr." / "e.g." / "3.14".
  */
 export declare function splitSentences(text: string): string[];
 /** Standard deviation of an array of numbers. */

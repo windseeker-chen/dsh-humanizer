@@ -41,6 +41,10 @@ export interface StyleFingerprint {
         hedgeRate: number;
         transitionRate: number;
         aiPhraseHits: number;
+        /** Adverbs (-ly, 然) per 100 tokens — higher reads more literary/AI. */
+        adverbRate: number;
+        /** English contractions (don't, it's) per 100 tokens — higher reads more casual. */
+        contractionRate: number;
     };
     vocabulary: {
         typeTokenRatio: number;

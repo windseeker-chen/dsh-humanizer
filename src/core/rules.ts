@@ -71,7 +71,7 @@ export const AI_RULES: readonly AiRule[] = [
     id: 'empty-opener-zh',
     category: 'empty-opener',
     severity: 3,
-    note: '中文式“时代背景开场”，先铺垫背景再进入正题。',
+    note: 'Time-and-place scene-setting opener before the point. 中文式「时代背景开场」，先铺垫背景再进入正题。',
     patterns: [
       '在这个.{0,12}的时代',
       '随着.{0,16}的不断发展',
@@ -137,7 +137,7 @@ export const AI_RULES: readonly AiRule[] = [
     id: 'cliche-zh',
     category: 'cliche',
     severity: 2,
-    note: '互联网黑话与空洞拔高词，最容易暴露 AI 腔。',
+    note: 'Internet slang and inflated buzzwords that most loudly mark AI text. 互联网黑话与空洞拔高词，最容易暴露 AI 腔。',
     patterns: [
       '赋能',
       '抓手',
@@ -199,7 +199,7 @@ export const AI_RULES: readonly AiRule[] = [
     id: 'hedge-zh',
     category: 'hedge',
     severity: 1,
-    note: '无意义的保守表述。',
+    note: 'Meaningless conservative qualifiers. 无意义的保守表述。',
     patterns: ['值得注意的是', '可以说', '某种程度上', '在一定程度上', '或许可以说', '大致而言', '总的来说', '一般来说', '基本上'],
   },
 
@@ -232,7 +232,7 @@ export const AI_RULES: readonly AiRule[] = [
     id: 'transition-zh',
     category: 'transition',
     severity: 2,
-    note: '形式化连接词。',
+    note: 'Formulaic connectives. 形式化连接词。',
     patterns: ['^此外，', '^与此同时，', '^值得注意的是，', '^由此可见', '^毋庸置疑', '^换言之', '^换句话说', '^其次，', '^再次，', '^然后，', '^接着，'],
   },
 
@@ -256,7 +256,7 @@ export const AI_RULES: readonly AiRule[] = [
     id: 'summary-ending-zh',
     category: 'summary-ending',
     severity: 3,
-    note: '总结式结尾与口号式收束。',
+    note: 'Summary-style ending and slogan close. 总结式结尾与口号式收束。',
     patterns: [
       '综上所述',
       '总而言之',
@@ -277,7 +277,7 @@ export const AI_RULES: readonly AiRule[] = [
     id: 'mechanical-parallel-zh',
     category: 'mechanical-parallel',
     severity: 3,
-    note: '整齐排比句，缺乏节奏变化。',
+    note: 'Mechanical parallel structure, lacking rhythm variation. 整齐排比句，缺乏节奏变化。',
     patterns: [
       '一方面.{0,20}另一方面',
       '首先.{0,30}其次.{0,30}再次',
@@ -305,7 +305,7 @@ export const AI_RULES: readonly AiRule[] = [
     id: 'over-explain-zh',
     category: 'over-explain',
     severity: 2,
-    note: '重复解释同一意思。',
+    note: 'Re-explains the same point a second time. 重复解释同一意思。',
     patterns: ['也就是说，', '换句话说，', '说白了就是', '这就意味着', '其核心在于'],
   },
 ]

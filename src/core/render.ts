@@ -18,9 +18,17 @@ export function renderReport(report: HumanizeReport): string {
     return lines.join('\n')
   }
   lines.push('')
-  lines.push('Detected patterns:')
+  lines.push('Detected patterns by category:')
+  const byCategory = new Map<string, { count: number; phrases: string[] }>()
   for (const issue of report.issues) {
-    lines.push(`- [${RULE_CATEGORY_LABELS[issue.category]} / ${issue.severity}] "${issue.phrase}" ×${issue.count}`)
+    const label = RULE_CATEGORY_LABELS[issue.category]
+    const entry = byCategory.get(label) ?? { count: 0, phrases: [] }
+    entry.count += issue.count
+    entry.phrases.push(`"${issue.phrase}" ×${issue.count}`)
+    byCategory.set(label, entry)
+  }
+  for (const [label, entry] of byCategory) {
+    lines.push(`- ${label}: ${entry.count} hit(s) — ${entry.phrases.join('; ')}`)
   }
   return lines.join('\n')
 }
