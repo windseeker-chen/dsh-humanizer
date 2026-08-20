@@ -4,16 +4,14 @@ import { defineTool } from '@deepseek-ai/dsh-tools'
 import {
   analyzeText,
   buildRewriteBrief,
-  detectLanguage,
   extractFingerprint,
   renderFingerprint,
   scoreSimilarity,
   type SimilarityResult,
   type StyleFingerprint,
-} from '@dsh/writing-core'
+} from './core/index.ts'
+import { resolveLanguage, type Strength } from './humanizer.ts'
 import { ProfileStore, type VoiceProfile } from './store.ts'
-
-export type Strength = 'light' | 'standard' | 'aggressive'
 
 export interface VoiceConfig {
   storagePath: string
@@ -192,12 +190,6 @@ export function registerVoiceTools(ctx: Context, config: VoiceConfig) {
       },
     }),
   )
-}
-
-function resolveLanguage(language: 'auto' | 'zh' | 'en' | undefined, text: string): string {
-  if (language === 'zh') return 'Chinese'
-  if (language === 'en') return 'English'
-  return detectLanguage(text) === 'zh' ? 'Chinese' : 'English'
 }
 
 // ---- render helpers (pure functions of the canonical value) ----------

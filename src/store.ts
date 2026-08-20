@@ -7,7 +7,7 @@
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises'
 import { homedir } from 'node:os'
 import { dirname, join } from 'node:path'
-import type { StyleFingerprint } from '@dsh/writing-core'
+import type { StyleFingerprint } from './core/index.ts'
 
 export interface VoiceProfile {
   id: string

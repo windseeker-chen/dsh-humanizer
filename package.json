@@ -1,21 +1,65 @@
 {
   "name": "dsh-humanizer",
+  "description": "Writing skill for DeepSeek Harness: de-AI humanizer plus personal voice clone. Scans AI-writing patterns, builds a style fingerprint from your samples, and returns rewrite briefs so the agent writes like you.",
   "version": "0.1.0",
-  "private": true,
   "type": "module",
-  "workspaces": [
-    "packages/*"
+  "main": "lib/index.js",
+  "types": "lib/types/index.d.ts",
+  "license": "BSD-3-Clause",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lynote-ai/dsh-humanizer.git"
+  },
+  "keywords": [
+    "deepseek",
+    "harness",
+    "dsh",
+    "dsh-plugin",
+    "writing",
+    "humanizer",
+    "voice-clone",
+    "style-transfer",
+    "de-ai"
   ],
   "scripts": {
-    "typecheck": "tsc --noEmit",
-    "build": "npm run build -w @dsh/writing-core && npm run build -w @dsh/humanizer && npm run build -w @dsh/voice",
-    "test": "node --experimental-strip-types --test \"packages/writing-core/test/**/*.test.ts\""
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "build": "tsc -p tsconfig.json",
+    "check": "npm run typecheck && npm run build",
+    "prepack": "npm run build",
+    "test": "node --experimental-strip-types --test \"test/**/*.test.ts\""
   },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1",
+    "@deepseek-ai/dsh-tools": ">=0.0.1-rc.1 <0.1.0 || >=0.1.0-rc.1 <0.2.0-0",
+    "@deepseek-ai/schemastery": "^3.18.1"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "exports": {
+    ".": {
+      "types": "./lib/types/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "src",
+    "cordis.patch.yml",
+    "LICENSE"
+  ],
   "devDependencies": {
     "@deepseek-ai/cordis": "^4.0.1",
     "@deepseek-ai/dsh-tools": "^0.0.1-rc.1",
     "@deepseek-ai/schemastery": "^3.18.1",
     "@types/node": "^24.0.0",
     "typescript": "^5.6.0"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
   }
 }

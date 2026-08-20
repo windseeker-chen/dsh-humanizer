@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 
-import { analyzeText } from '../src/analyze.ts'
-import { extractFingerprint } from '../src/fingerprint.ts'
-import { scoreSimilarity } from '../src/score.ts'
-import { splitSentences, wordCount } from '../src/text.ts'
-import { detectIssues } from '../src/rules.ts'
+import { analyzeText } from '../src/core/analyze.ts'
+import { extractFingerprint } from '../src/core/fingerprint.ts'
+import { scoreSimilarity } from '../src/core/score.ts'
+import { splitSentences, wordCount } from '../src/core/text.ts'
+import { detectIssues } from '../src/core/rules.ts'
 
 test('splits sentences for English and Chinese', () => {
   const en = splitSentences('First sentence. Second one! Third?')

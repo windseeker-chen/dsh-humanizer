@@ -8,7 +8,7 @@ import {
   renderReport,
   renderRules,
   type HumanizeReport,
-} from '@dsh/writing-core'
+} from './core/index.ts'
 
 export type Strength = 'light' | 'standard' | 'aggressive'
 
@@ -89,7 +89,7 @@ export function registerHumanizerTools(ctx: Context, config: HumanizerConfig) {
   )
 }
 
-function resolveLanguage(language: 'auto' | 'zh' | 'en' | undefined, text: string): string {
+export function resolveLanguage(language: 'auto' | 'zh' | 'en' | undefined, text: string): string {
   if (language === 'zh') return 'Chinese'
   if (language === 'en') return 'English'
   return detectLanguage(text) === 'zh' ? 'Chinese' : 'English'
