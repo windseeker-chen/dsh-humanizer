@@ -30,23 +30,33 @@ export function wordCount(text: string): number {
 /**
  * Split a blob into sentences. Handles `。！？!?` (with optional closing
  * quotes) and `.` followed by whitespace or end-of-string, without breaking
- * abbreviations that end in a dot mid-word.
+ * abbreviations such as "Dr." / "e.g." / "3.14".
  */
 export function splitSentences(text: string): string[] {
-  const normalized = text
+  let s = text
+  // Protect honorifics and common abbreviations so "Dr. Smith" stays whole.
+  s = s.replace(/\b((?:dr|mr|mrs|ms|prof|sr|jr|st|vs|etc|no)\.)(?=\s+[A-Z])/gi, (m) =>
+    m.replace(/\./g, '\u0000'),
+  )
+  // Protect "e.g." / "i.e." anywhere they are followed by whitespace.
+  s = s.replace(/\b(e\.g\.|i\.e\.)(?=\s)/gi, (m) => m.replace(/\./g, '\u0000'))
+
+  const normalized = s
     // CJK full-width stops always end a sentence, optionally followed by a closing quote.
     .replace(/([。！？]+)(["'”’」』）\)\]]*)/g, '$1$2\n')
     // ASCII ! ? end a sentence before whitespace/end or a closing quote + whitespace/end.
     .replace(/([!?]+)(["'”’」』\)\]]*)(?=\s+|$)/g, '$1$2\n')
-    // ASCII period ends a sentence before whitespace/end (leaves "e.g." / "3.14" intact).
+    // ASCII period ends a sentence before whitespace/end (leaves decimals intact).
     .replace(/\.(?=\s+|$)/g, '.\n')
     // Ellipsis as a sentence boundary.
     .replace(/…{2,}/g, '$&\n')
+    // Restore protected abbreviation dots.
+    .replace(/\u0000/g, '.')
 
   return normalized
     .split(/\n+/)
-    .map((s) => s.trim())
-    .filter((s) => s.length > 0)
+    .map((x) => x.trim())
+    .filter((x) => x.length > 0)
 }
 
 /** Standard deviation of an array of numbers. */

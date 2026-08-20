@@ -15,6 +15,15 @@ test('splits sentences for English and Chinese', () => {
   assert.deepEqual(zh, ['这是第一句。', '这是第二句！', '真的吗？'])
 })
 
+test('keeps abbreviations and decimals intact', () => {
+  assert.deepEqual(splitSentences('Dr. Smith went home. Then he left.'), [
+    'Dr. Smith went home.',
+    'Then he left.',
+  ])
+  assert.deepEqual(splitSentences('I paid 3.14 for pie. Nice.'), ['I paid 3.14 for pie.', 'Nice.'])
+  assert.deepEqual(splitSentences('Use e.g. a comma. Or not.'), ['Use e.g. a comma.', 'Or not.'])
+})
+
 test('counts CJK chars and Latin words', () => {
   assert.equal(wordCount('hello world'), 2)
   assert.equal(wordCount('你好世界'), 4)
