@@ -1,20 +1,20 @@
 # dsh-humanizer
 
-[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (`dsh`) 写作插件。核心命题是——**不是「像人写」，而是「像我写」**：一边去掉通用 AI 腔，一边学习你本人的写作指纹，把任意草稿改成「你写的」。
+A writing skill for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (`dsh`). The core idea is **not "write like a human", but "write like me"**: strip generic AI-sounding patterns on one side, learn your own writing fingerprint on the other, and turn any draft into something *you* wrote.
 
-这是一个给 Agent 用的 **skill**，本身**不依赖 LLM 服务、不做模型调用**：它只负责规则、指纹、打分，以及产出「改写 brief」；真正的改写由 Agent 自己完成。
+This is a **skill for the agent**, not an LLM wrapper: it performs no model calls. It only produces rules, fingerprints, scores, and rewrite briefs — the agent does the actual rewriting itself.
 
-## 安装
+## Install
 
 ```sh
-# 从 GitHub 安装（已内置编译产物 lib/）
+# from GitHub (ships prebuilt lib/)
 dsh plugin add github:lynote-ai/dsh-humanizer
 
-# 或发布到 npm 后：
+# or, once published to npm:
 # dsh plugin add dsh-humanizer
 ```
 
-配置（可选，都有默认值）：
+Optional config (all fields have defaults):
 
 ```yaml
 - insert:
@@ -26,70 +26,85 @@ dsh plugin add github:lynote-ai/dsh-humanizer
         maxExcerpts: 3
 ```
 
-## 工具（8 个，全部确定性、无模型调用）
+## Tools (8 — all deterministic, no model calls)
 
-去 AI 味：
+De-AI:
 
-| 工具 | 作用 |
+| Tool | Purpose |
 |---|---|
-| `humanize_scan` | 检测：AI 分数 + 命中的规则清单 |
-| `humanize_rules` | 导出完整规则库（透明、可编辑） |
-| `humanize_rewrite` | 产出改写 brief（规则 + 本文命中问题），Agent 按 brief 自己改写 |
+| `humanize_scan` | Detect AI patterns and return an AI-ness score plus the matched rules |
+| `humanize_rules` | Export the full rule catalogue (transparent, editable) |
+| `humanize_rewrite` | Return a rewrite brief (rules + issues found in this text); the agent applies it |
 
-个人文风克隆：
+Personal voice clone:
 
-| 工具 | 作用 |
+| Tool | Purpose |
 |---|---|
-| `voice_import` | 导入样本 → 提取文风指纹 → 持久化 Profile |
-| `voice_profile` | 查看单个 Profile / 列出全部 |
-| `voice_remove` | 删除 Profile |
-| `voice_score` | 文本与 Profile 的相似度（0–100 + 分项） |
-| `voice_rewrite` | 产出改写 brief（指纹 + 代表样本 few-shot + 本文命中问题） |
+| `voice_import` | Import samples → extract a style fingerprint → persist a profile |
+| `voice_profile` | Read one profile, or list all |
+| `voice_remove` | Delete a profile |
+| `voice_score` | Similarity between text and a profile (0–100 + per-feature breakdown) |
+| `voice_rewrite` | Return a rewrite brief (fingerprint + few-shot samples + issues found) |
 
-## 原理
+## How it works
 
-`src/core/` 是纯函数库，零运行时依赖、可单测：
+`src/core/` is a pure, dependency-free, unit-tested library:
 
-- `rules.ts` — AI 写作模式规则库（英文 + 中文，参考 stop-slop / Humanizer-zh）
-- `analyze.ts` — 去 AI 味扫描：空洞开场、AI 套话、hedge、模板连接词、机械排比、总结式结尾
-- `fingerprint.ts` — 文风指纹：句长/节奏 burstiness/标点习惯/人称立场/高频词/词汇丰富度
-- `score.ts` — 相似度打分（0–100 + 分项）
-- `render.ts` — 改写 brief 构建
+- `rules.ts` — AI-writing pattern catalogue (English + Chinese, modeled on stop-slop / Humanizer-zh)
+- `analyze.ts` — de-AI scan: empty openers, clichés, hedging, template transitions, mechanical parallelism, summary endings
+- `fingerprint.ts` — style fingerprint: sentence length / burstiness, punctuation habits, stance (person, adverbs, contractions), preferred vocabulary, lexical richness
+- `score.ts` — similarity scoring (0–100 + per-feature breakdown)
+- `render.ts` — rewrite-brief construction
 
-`humanize_rewrite` / `voice_rewrite` 不调模型，只返回改写 brief；Agent 拿到 brief 后自己改写。`voice_score` 的分项输出为后续「根据反馈继续学习」留出接口。
+`humanize_rewrite` / `voice_rewrite` never call a model — they return a brief, and the agent rewrites in its own turn. `voice_score`'s per-feature output is the hook for future "learn from feedback" iteration.
 
-## 使用示例（Agent 视角）
+## Example (agent's point of view)
 
 ```
-用户：这是我写的十几条推文，帮我建个「我的文风」。
+User: I have a dozen tweets I wrote. Build me a "my voice" profile.
 
-Agent：
-  1. voice_import(name="me-x", samples=[...])   → 提取指纹并保存
+Agent:
+  1. voice_import(name="me-x", samples=[...])   → extract & store fingerprint
 
-用户：把这段 AI 写的发布稿改成我的口吻。
+User: Rewrite this AI-written release post in my voice.
 
-Agent：
-  1. voice_score(text=草稿, name="me-x")         → 41/100
-  2. voice_rewrite(text=草稿, name="me-x")       → 拿到改写 brief（指纹 + 样本 + 命中问题）
-  3. Agent 按 brief 自己改写
-  4. voice_score(改写结果, name="me-x")           → 83/100
+Agent:
+  1. voice_score(text=draft, name="me-x")        → 41/100
+  2. voice_rewrite(text=draft, name="me-x")      → get brief (fingerprint + samples + issues)
+  3. agent rewrites following the brief
+  4. voice_score(rewritten, name="me-x")         → 83/100
 ```
 
-## 开发
+## Development
 
 ```sh
 npm install
 npm run check       # typecheck + build
-npm test            # 单元测试（node --experimental-strip-types）
+npm test            # unit tests (node --experimental-strip-types)
 npm run build       # tsc → lib/
 ```
 
-## 设计取舍
+## Design decisions
 
-- **插件不调 LLM**：规则、指纹、打分都是确定性计算，可复现、可单测。
-- **单包自包含**：无未发布的共享依赖，`dsh plugin add` 直接可装。
-- **持久化用文件而非 `ctx.storage` 后端**：`~/.dsh/*.json`，无 storage 后端也能启动。
+- **No LLM calls** — rules, fingerprints, and scores are deterministic and reproducible.
+- **Single self-contained bundle** — no unpublished shared dependency, so `dsh plugin add` just works.
+- **File-based persistence** — `~/.dsh/*.json`, no storage backend required.
 
 ## License
 
 [BSD-3-Clause](LICENSE)
+
+---
+
+## 中文说明
+
+面向 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（`dsh`）的写作插件。核心理念是——**不是「像人写」，而是「像我写」**：一边去掉通用 AI 腔，一边学习你本人的写作指纹，把任意草稿改成「你写的」。
+
+这是一个给 Agent 用的 **skill**，**不调模型**：只产出规则、指纹、打分和「改写 brief」，真正的改写由 Agent 自己完成。
+
+- **去 AI 味**：`humanize_scan`（检测）/ `humanize_rules`（规则库）/ `humanize_rewrite`（改写 brief）
+- **文风克隆**：`voice_import` / `voice_profile` / `voice_remove` / `voice_score`（0–100 相似度）/ `voice_rewrite`（改写 brief）
+
+规则库中英双语覆盖（参考 stop-slop / Humanizer-zh）。指纹提取与打分均为确定性计算，可复现、可单测；Profile 默认持久化到 `~/.dsh/voice-profiles.json`。
+
+安装：`dsh plugin add github:lynote-ai/dsh-humanizer`
