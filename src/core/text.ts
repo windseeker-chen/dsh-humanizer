@@ -47,9 +47,9 @@ export function splitSentences(text: string): string[] {
     // ASCII ! ? end a sentence before whitespace/end or a closing quote + whitespace/end.
     .replace(/([!?]+)(["'”’」』\)\]]*)(?=\s+|$)/g, '$1$2\n')
     // ASCII period ends a sentence before whitespace/end (leaves decimals intact).
-    .replace(/\.(?=\s+|$)/g, '.\n')
-    // Ellipsis as a sentence boundary.
-    .replace(/…{2,}/g, '$&\n')
+    .replace(/\.(["'”’」』\)\]]*)(?=\s+|$)/g, '.$1\n')
+    // Ellipsis as a sentence boundary (single or repeated).
+    .replace(/…+/g, '$&\n')
     // Restore protected abbreviation dots.
     .replace(/\u0000/g, '.')
 
