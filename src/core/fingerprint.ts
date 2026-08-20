@@ -55,6 +55,10 @@ export interface StyleFingerprint {
     hedgeRate: number
     transitionRate: number
     aiPhraseHits: number
+    /** Adverbs (-ly, 然) per 100 tokens — higher reads more literary/AI. */
+    adverbRate: number
+    /** English contractions (don't, it's) per 100 tokens — higher reads more casual. */
+    contractionRate: number
   }
   vocabulary: {
     typeTokenRatio: number
@@ -155,6 +159,12 @@ export function extractFingerprint(samples: SampleInput[]): StyleFingerprint {
   )
   const aiPhraseHits = issues.reduce((a, b) => a + b.count, 0)
 
+  // Adverbs (-ly in English, 然 suffix in Chinese) and English contractions.
+  const adverbEn = (corpus.match(/\b\w+ly\b/gi) ?? []).length
+  const adverbZh = (corpus.match(/然/g) ?? []).length
+  const adverbRate = perHundred(adverbEn + adverbZh, totalWords)
+  const contractionRate = perHundred(corpus.match(/\b\w+'(?:s|t|re|ve|ll|d|m)\b/gi)?.length ?? 0, totalWords)
+
   const vocab = vocabularyStats(corpus)
 
   const platforms: Record<string, number> = {}
@@ -189,6 +199,8 @@ export function extractFingerprint(samples: SampleInput[]): StyleFingerprint {
       hedgeRate,
       transitionRate,
       aiPhraseHits,
+      adverbRate,
+      contractionRate,
     },
     vocabulary: {
       typeTokenRatio: vocab.typeTokenRatio,
@@ -205,7 +217,7 @@ export const EMPTY_FINGERPRINT: StyleFingerprint = {
   totalWords: 0,
   sentence: { avgLength: 0, medianLength: 0, burstiness: 0, shortRate: 0, longRate: 0 },
   punctuation: EMPTY_PUNCTUATION,
-  stance: { firstPersonRate: 0, secondPersonRate: 0, hedgeRate: 0, transitionRate: 0, aiPhraseHits: 0 },
+  stance: { firstPersonRate: 0, secondPersonRate: 0, hedgeRate: 0, transitionRate: 0, aiPhraseHits: 0, adverbRate: 0, contractionRate: 0 },
   vocabulary: { typeTokenRatio: 0, topWords: [], topOpeners: [] },
   platforms: {},
 }

@@ -46,7 +46,7 @@ export function renderFingerprint(fp: StyleFingerprint): string {
     `Punctuation (per 100 tokens): em-dash ${fp.punctuation.emDash}, ellipsis ${fp.punctuation.ellipsis}, semicolon ${fp.punctuation.semicolon}, colon ${fp.punctuation.colon}, parens ${fp.punctuation.parentheses}, ! ${fp.punctuation.exclamation}, ? ${fp.punctuation.question}`,
   )
   lines.push(
-    `Stance: first-person ${fp.stance.firstPersonRate}%, second-person ${fp.stance.secondPersonRate}%, hedge ${fp.stance.hedgeRate}, transition ${fp.stance.transitionRate}, AI-phrase hits ${fp.stance.aiPhraseHits}`,
+    `Stance: first-person ${fp.stance.firstPersonRate}%, second-person ${fp.stance.secondPersonRate}%, hedge ${fp.stance.hedgeRate}, transition ${fp.stance.transitionRate}, adverbs ${fp.stance.adverbRate}, contractions ${fp.stance.contractionRate}, AI-phrase hits ${fp.stance.aiPhraseHits}`,
   )
   lines.push(`Type-token ratio: ${fp.vocabulary.typeTokenRatio}`)
   if (fp.vocabulary.topWords.length) {
@@ -86,7 +86,7 @@ function fingerprintSection(fp?: StyleFingerprint): string {
     'Rewrite to match these writing habits:',
     `- Sentence length: average ${fp.sentence.avgLength} tokens, median ${fp.sentence.medianLength}; rhythm (burstiness) ${fp.sentence.burstiness}; about ${Math.round(fp.sentence.shortRate * 100)}% short sentences, ${Math.round(fp.sentence.longRate * 100)}% long.`,
     `- Punctuation habits per 100 tokens: em-dash ${fp.punctuation.emDash}, ellipsis ${fp.punctuation.ellipsis}, semicolon ${fp.punctuation.semicolon}, colon ${fp.punctuation.colon}, parentheses ${fp.punctuation.parentheses}, exclamation ${fp.punctuation.exclamation}, question ${fp.punctuation.question}.`,
-    `- Stance: first-person ${fp.stance.firstPersonRate}%, second-person ${fp.stance.secondPersonRate}%, hedging ${fp.stance.hedgeRate}, transitions ${fp.stance.transitionRate}.`,
+    `- Stance: first-person ${fp.stance.firstPersonRate}%, second-person ${fp.stance.secondPersonRate}%, hedging ${fp.stance.hedgeRate}, transitions ${fp.stance.transitionRate}, adverbs ${fp.stance.adverbRate}, contractions ${fp.stance.contractionRate}.`,
     `- Preferred vocabulary: ${fp.vocabulary.topWords.map((w) => w.token).join(', ') || '(none recorded)'}.`,
     `- Sentence openers often start with: ${fp.vocabulary.topOpeners.map((w) => w.token).join(', ') || '(none recorded)'}.`,
     '',
